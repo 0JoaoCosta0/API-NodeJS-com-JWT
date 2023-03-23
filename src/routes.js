@@ -1,18 +1,21 @@
 const express = require("express");
 const routes = express.Router();
 
-const ProductController = require("./controllers/ProductController");
-const UserController = require("./controllers/UserController");
-const SessionController = require('./controllers/SessionController')
+const controllers = require('./controllers')
 
-routes.get("/products", ProductController.index);
-routes.get("/products/:id", ProductController.show);
-routes.post("/products", ProductController.store);
-routes.put("/products/:id", ProductController.update);
-routes.delete("/products/:id", ProductController.destroy);
+const authMiddleware = require('./middlewares/auth')
+const managerMiddleware = require('./middlewares/authManager')
 
-routes.post('/users', UserController.store)
+routes.get("/products", authMiddleware, controllers.ProductController.index);
+routes.get("/products/:id", managerMiddleware, controllers.ProductController.show);
+routes.post("/products", controllers.ProductController.store);
+routes.put("/products/:id", controllers.ProductController.update);
+routes.delete("/products/:id", controllers.ProductController.destroy);
 
-routes.post('/sessions', SessionController.store)
+routes.post('/users', controllers.UserController.store)
+
+routes.post('/sessions', controllers.SessionController.store)
+
+routes.get('/teste', managerMiddleware, (req, res) => res.json({ ok: true }))
 
 module.exports = routes;
